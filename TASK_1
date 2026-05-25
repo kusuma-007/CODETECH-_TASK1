@@ -1,0 +1,152 @@
+#The Sales Trend Visualization project is designed to analyze and 
+interpret monthly sales data using Data Science and Machine Learning techniques. 
+The project includes data cleaning, statistical analysis, and 
+interactive visualizations to identify sales patterns and business growth trends.
+A Linear Regression model is implemented to forecast future sales, 
+enabling data-driven decision-makingand predictive business analy.
+# =========================
+# SALES TREND VISUALIZATION
+# =========================
+
+# Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# -------------------------
+# STEP 1: CREATE DATASET
+# -------------------------
+
+data = {
+    'Month': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    
+    'Sales': [12000, 15000, 17000, 14000, 18000, 21000,
+              22000, 25000, 24000, 27000, 30000, 32000]
+}
+
+df = pd.DataFrame(data)
+
+print("Original Dataset")
+print(df)
+
+# -------------------------
+# STEP 2: DATA CLEANING
+# -------------------------
+
+# Check missing values
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Remove duplicates if any
+df = df.drop_duplicates()
+
+print("\nCleaned Dataset")
+print(df)
+
+# -------------------------
+# STEP 3: DATA ANALYSIS
+# -------------------------
+
+print("\nStatistical Analysis")
+print(df.describe())
+
+# Highest Sales
+max_sales = df['Sales'].max()
+print("\nHighest Sales:", max_sales)
+
+# Lowest Sales
+min_sales = df['Sales'].min()
+print("Lowest Sales:", min_sales)
+
+# Average Sales
+avg_sales = df['Sales'].mean()
+print("Average Sales:", avg_sales)
+
+# -------------------------
+# STEP 4: VISUALIZATION
+# -------------------------
+
+plt.figure(figsize=(10,5))
+
+plt.plot(df['Month'], df['Sales'],
+         marker='o',
+         linewidth=3)
+
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+plt.grid(True)
+
+plt.show()
+
+# -------------------------
+# STEP 5: BAR CHART
+# -------------------------
+
+plt.figure(figsize=(10,5))
+
+plt.bar(df['Month'], df['Sales'])
+
+plt.title("Monthly Sales Bar Chart")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+
+plt.show()
+
+# -------------------------
+# STEP 6: PREDICTION MODEL
+# -------------------------
+
+# Convert months into numbers
+x = np.array(range(1,13)).reshape(-1,1)
+
+y = df['Sales']
+
+# Train model
+model = LinearRegression()
+model.fit(x, y)
+
+# Predict future sales
+future_month = np.array([[13]])
+prediction = model.predict(future_month)
+
+print("\nPredicted Sales for Next Month:", prediction[0])
+
+# -------------------------
+# STEP 7: PREDICTION GRAPH
+# -------------------------
+
+predicted_sales = model.predict(x)
+
+plt.figure(figsize=(10,5))
+
+plt.plot(df['Month'], y,
+         marker='o',
+         label='Actual Sales')
+
+plt.plot(df['Month'], predicted_sales,
+         linestyle='--',
+         label='Predicted Trend')
+
+plt.title("Sales Prediction Trend")
+plt.xlabel("Month")
+plt.ylabel("Sales")
+
+plt.legend()
+plt.grid(True)
+
+plt.show()
+
+# -------------------------
+# STEP 8: DASHBOARD SUMMARY
+# -------------------------
+
+print("\n========== DASHBOARD ==========")
+print("Total Sales :", df['Sales'].sum())
+print("Average Sales :", avg_sales)
+print("Highest Sales :", max_sales)
+print("Lowest Sales :", min_sales)
+print("Next Month Prediction :", prediction[0])
+print("================================")
