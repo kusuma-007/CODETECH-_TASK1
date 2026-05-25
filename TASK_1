@@ -1,152 +1,151 @@
-#The Sales Trend Visualization project is designed to analyze and 
-interpret monthly sales data using Data Science and Machine Learning techniques. 
-The project includes data cleaning, statistical analysis, and 
-interactive visualizations to identify sales patterns and business growth trends.
-A Linear Regression model is implemented to forecast future sales, 
-enabling data-driven decision-makingand predictive business analy.
-# =========================
-# SALES TREND VISUALIZATION
-# =========================
+#The Sales Trend Visualization 
+Prediction Dashboard is a Data Science project developed toanalyze monthly sales performance.
+and forecast future sales trends using Machine Learning techniques. 
+The dashboard provides interactive visualizations, sales comparisons,
+and predictive analysis to help businesses understand growth patterns and make data-driven decisions.
 
-# Import Libraries
+import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+import numpy as np
 
-# -------------------------
-# STEP 1: CREATE DATASET
-# -------------------------
+# -----------------------------------
+# Dashboard Title
+# -----------------------------------
+st.title("Sales Trend Visualization & Prediction Dashboard")
 
+# -----------------------------------
+# Different Dataset
+# -----------------------------------
 data = {
-    'Month': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    
-    'Sales': [12000, 15000, 17000, 14000, 18000, 21000,
-              22000, 25000, 24000, 27000, 30000, 32000]
+    "Order Date": [
+        "2024-01-08",
+        "2024-02-14",
+        "2024-03-19",
+        "2024-04-11",
+        "2024-05-09",
+        "2024-06-16",
+        "2024-07-22"
+    ],
+
+    "Sales": [
+        10000,
+        14000,
+        9000,
+        18000,
+        24000,
+        21000,
+        30000
+    ],
+
+    "Category": [
+        "Mobile Phones",
+        "Laptop Accessories",
+        "Home Appliances",
+        "Food Products",
+        "Healthcare",
+        "Stationery",
+        "Automobile Parts"
+    ]
 }
 
+# Create DataFrame
 df = pd.DataFrame(data)
 
-print("Original Dataset")
-print(df)
+# Convert Date
+df["Order Date"] = pd.to_datetime(df["Order Date"])
 
-# -------------------------
-# STEP 2: DATA CLEANING
-# -------------------------
+# Add Month Number
+df["Month_Number"] = [1, 2, 3, 4, 5, 6, 7]
 
-# Check missing values
-print("\nMissing Values:")
-print(df.isnull().sum())
+# -----------------------------------
+# Dataset Preview
+# -----------------------------------
+st.header("Dataset Preview")
+st.dataframe(df)
 
-# Remove duplicates if any
-df = df.drop_duplicates()
+# -----------------------------------
+# Monthly Sales Trend
+# -----------------------------------
+st.header("Monthly Sales Trend")
 
-print("\nCleaned Dataset")
-print(df)
+months = [1, 2, 3, 4, 5, 6, 7]
+monthly_sales = [10000, 14000, 9000, 18000, 24000, 21000, 30000]
 
-# -------------------------
-# STEP 3: DATA ANALYSIS
-# -------------------------
+fig, ax = plt.subplots(figsize=(8, 5))
 
-print("\nStatistical Analysis")
-print(df.describe())
+ax.plot(months, monthly_sales, marker='o')
 
-# Highest Sales
-max_sales = df['Sales'].max()
-print("\nHighest Sales:", max_sales)
+ax.set_title("Monthly Sales Trend")
+ax.set_xlabel("Month")
+ax.set_ylabel("Sales")
 
-# Lowest Sales
-min_sales = df['Sales'].min()
-print("Lowest Sales:", min_sales)
+st.pyplot(fig)
 
-# Average Sales
-avg_sales = df['Sales'].mean()
-print("Average Sales:", avg_sales)
+# -----------------------------------
+# Sales Bar Chart
+# -----------------------------------
+st.header("Sales Bar Chart")
 
-# -------------------------
-# STEP 4: VISUALIZATION
-# -------------------------
+fig2, ax2 = plt.subplots(figsize=(8, 5))
 
-plt.figure(figsize=(10,5))
+ax2.bar(months, monthly_sales)
 
-plt.plot(df['Month'], df['Sales'],
-         marker='o',
-         linewidth=3)
+ax2.set_title("Monthly Sales Comparison")
+ax2.set_xlabel("Month")
+ax2.set_ylabel("Sales")
 
-plt.title("Monthly Sales Trend")
-plt.xlabel("Month")
-plt.ylabel("Sales")
-plt.grid(True)
+st.pyplot(fig2)
 
-plt.show()
+# -----------------------------------
+# Sales Prediction Analysis
+# -----------------------------------
+st.header("Sales Prediction Analysis")
 
-# -------------------------
-# STEP 5: BAR CHART
-# -------------------------
+X = np.array(months).reshape(-1, 1)
+y = np.array(monthly_sales)
 
-plt.figure(figsize=(10,5))
-
-plt.bar(df['Month'], df['Sales'])
-
-plt.title("Monthly Sales Bar Chart")
-plt.xlabel("Month")
-plt.ylabel("Sales")
-
-plt.show()
-
-# -------------------------
-# STEP 6: PREDICTION MODEL
-# -------------------------
-
-# Convert months into numbers
-x = np.array(range(1,13)).reshape(-1,1)
-
-y = df['Sales']
-
-# Train model
+# Train Model
 model = LinearRegression()
-model.fit(x, y)
+model.fit(X, y)
 
-# Predict future sales
-future_month = np.array([[13]])
-prediction = model.predict(future_month)
+# Future Predictions
+future_months = np.array([8, 9, 10]).reshape(-1, 1)
+predictions = model.predict(future_months)
 
-print("\nPredicted Sales for Next Month:", prediction[0])
+# Prediction Table
+prediction_df = pd.DataFrame({
+    "Future Month": [8, 9, 10],
+    "Predicted Sales": predictions.astype(int)
+})
 
-# -------------------------
-# STEP 7: PREDICTION GRAPH
-# -------------------------
+st.write(prediction_df)
 
-predicted_sales = model.predict(x)
+# Prediction Graph
+fig3, ax3 = plt.subplots(figsize=(8, 5))
 
-plt.figure(figsize=(10,5))
+# Actual Sales
+ax3.plot(
+    months,
+    monthly_sales,
+    marker='o',
+    label='Actual Sales'
+)
 
-plt.plot(df['Month'], y,
-         marker='o',
-         label='Actual Sales')
+# Predicted Sales
+ax3.plot(
+    [8, 9, 10],
+    predictions,
+    marker='o',
+    linestyle='--',
+    label='Predicted Sales'
+)
 
-plt.plot(df['Month'], predicted_sales,
-         linestyle='--',
-         label='Predicted Trend')
+ax3.set_title("Sales Prediction")
+ax3.set_xlabel("Month")
+ax3.set_ylabel("Sales")
 
-plt.title("Sales Prediction Trend")
-plt.xlabel("Month")
-plt.ylabel("Sales")
+ax3.legend()
 
-plt.legend()
-plt.grid(True)
-
-plt.show()
-
-# -------------------------
-# STEP 8: DASHBOARD SUMMARY
-# -------------------------
-
-print("\n========== DASHBOARD ==========")
-print("Total Sales :", df['Sales'].sum())
-print("Average Sales :", avg_sales)
-print("Highest Sales :", max_sales)
-print("Lowest Sales :", min_sales)
-print("Next Month Prediction :", prediction[0])
-print("================================")
+st.pyplot(fig3)
